@@ -54,6 +54,13 @@
 			retain-state-suspended;
 		};
 	};
+
+	ramoops {
+		compatible = "ramoops";
+		memory-region = <&ramoops_mem>;
+		console-size = <0x0 0x100000>;
+		pmsg-size = <0x0 0x100000>;
+	};
 };
 
 &blsp1_uart3_hs {

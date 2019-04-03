@@ -402,6 +402,13 @@
 			reg = <0x0 0x9d600000 0x0 0x02400000>;
 			label = "cont_splash_mem";
 		};
+
+		ramoops_mem: ramoops_region@ac000000 {
+			compatible = "removed-dma-pool";
+			no-map;
+			reg = <0x0 0xac000000 0x0 0x00200000>;
+			label = "ramoops_mem";
+		};
 	};
 };
 
