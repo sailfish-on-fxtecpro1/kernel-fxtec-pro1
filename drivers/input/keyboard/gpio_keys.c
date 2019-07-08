@@ -362,8 +362,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		return;
 	}
 #if 1
-	if(button->gpio == HALL_COVER_PIN||
-		button->gpio == HALL_KEYBOARD_PIN){
+	if(button->gpio == HALL_COVER_PIN){
 			
 		if(state){
 			input_event(input, type, button->code, 1);
@@ -378,6 +377,11 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 			input_event(input, type, button->code+1, 0);
 			input_sync(input);			
 		}
+		return;	
+	}
+	if(button->gpio == HALL_KEYBOARD_PIN){
+        input_event(input, EV_SW, SW_KEYPAD_SLIDE, state);
+		input_sync(input);
 		return;	
 	}
 #endif	
@@ -829,7 +833,8 @@ static int gpio_keys_probe(struct platform_device *pdev)
     input_set_capability(input, EV_KEY, KEY_FN_F6);
     input_set_capability(input, EV_SW, SW_TABLET_MODE);
     input_set_capability(input, EV_SW, SW_ROTATE_LOCK);
-
+    input_set_capability(input, EV_SW, SW_KEYPAD_SLIDE);
+    
 	/* Enable auto repeat feature of Linux input subsystem */
 	if (pdata->rep)
 		__set_bit(EV_REP, input->evbit);
