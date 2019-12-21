@@ -14,11 +14,11 @@
 #endif
 
 #ifndef TRUE
-    #define TRUE 1
+    #define TRUE (1)
 #endif
  
 #ifndef FALSE
-    #define FALSE 0
+    #define FALSE (0)
 #endif
  
 #ifndef NULL
@@ -43,27 +43,27 @@
 
 
 //IIC的写地址，={1011，0，AD1，AD0，0}，AD0,AD1接低则为0xB0 ，接高则是0xB6
-#define IIC_ADDRESS_WRITE       0xB0  //0x58
-#define IIC_ADDRESS_READ        0xB1 
+#define IIC_ADDRESS_WRITE       (0xB0)  //0x58
+#define IIC_ADDRESS_READ        (0xB1) 
 
-#define X_NUM  8   //列
-#define Y_NUM  8   //行
+#define X_NUM  (8)   //列
+#define Y_NUM  (8)   //行
 
 //i2c  tranfer ,repeat try times
-#define AW9523_I2C_MAX_LOOP  50
+#define AW9523_I2C_MAX_LOOP  (50)
 
 
 //reg address
-#define INPUT_PORT0     0x00
-#define INPUT_PORT1     0x01
-#define OUTPUT_PORT0    0x02
-#define OUTPUT_PORT1    0x03
-#define CONFIG_PORT0    0x04
-#define CONFIG_PORT1    0x05
-#define INT_PORT0   0x06
-#define INT_PORT1   0x07
-#define IC_ID       0x10
-#define CTL         0x11
-#define REG_SOFT_RESET            0x7F
+#define INPUT_PORT0     (0x00)
+#define INPUT_PORT1     (0x01)
+#define OUTPUT_PORT0    (0x02)
+#define OUTPUT_PORT1    (0x03)
+#define CONFIG_PORT0    (0x04)
+#define CONFIG_PORT1    (0x05)
+#define INT_PORT0       (0x06)
+#define INT_PORT1       (0x07)
+#define IC_ID           (0x10)
+#define CTL             (0x11)
+#define REG_SOFT_RESET  (0x7F)
 
 #endif
