@@ -427,7 +427,7 @@
 			label = "home";
 			gpios = <&tlmm 21 0x1>;
 			linux,input-type = <1>;
-			linux,code = <172>;
+			linux,code = <125>;
 			debounce-interval = <15>;
 		};
 		
@@ -459,7 +459,7 @@
 			label = "oeml";
 			gpios = <&tlmm 32 0x1>;
 			linux,input-type = <1>;
-			linux,code = <464>;
+			linux,code = <100>;
 			debounce-interval = <15>;
 		};
 		
@@ -467,7 +467,7 @@
 			label = "oemr";
 			gpios = <&tlmm 33 0x1>;
 			linux,input-type = <1>;
-			linux,code = <464>;
+			linux,code = <100>;
 			debounce-interval = <15>;
 		};	
 		

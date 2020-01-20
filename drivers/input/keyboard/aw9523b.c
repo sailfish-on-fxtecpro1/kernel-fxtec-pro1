@@ -126,14 +126,14 @@ static const unsigned short  key_array[Y_NUM][X_NUM] = {
 	{ KEY_BACKSPACE, KEY_D,         KEY_X,          KEY_K,        KEY_SEMICOLON, KEY_EQUAL,  KEY_E,     KEY_APOSTROPHE  },
 	{ KEY_CAPSLOCK,  KEY_BACKSLASH, KEY_LEFTBRACE,  KEY_DOWN,     KEY_O,         KEY_0,      KEY_GRAVE, KEY_K           },
 	{ KEY_SPACE,     KEY_F,         KEY_C,          KEY_N,        KEY_U,         KEY_8,      KEY_R,     KEY_5           },
-	{ KEY_BACK,      KEY_1,         0xFF,           0xFF,         KEY_2,         KEY_4,      KEY_TAB,   0xFF            }
+	{ KEY_ESC,       KEY_1,         0xFF,           0xFF,         KEY_2,         KEY_4,      KEY_TAB,   0xFF            }
 };
 
 // This macro sets the interval between polls of the key matrix for ghosted keys (in milliseconds).
 // Note that polling only happens while one key is already pressed, to scan the matrix for keys in the same row.
 #define POLL_INTERVAL (15)
 
-#define P1_DEFAULT_VALUE (0) /*p1ÓÃÀ´Êä³ö£¬Õâ¸öÖµÊÇp1µÄ³õÊ¼Öµ*/
+#define P1_DEFAULT_VALUE (0) /*p1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½p1ï¿½Ä³ï¿½Ê¼Öµ*/
 
 static int aw9523b_i2c_read(struct i2c_client *client, char *writebuf,
                int writelen, char *readbuf, int readlen)
