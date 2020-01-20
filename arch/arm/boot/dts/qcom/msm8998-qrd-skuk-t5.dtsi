@@ -148,6 +148,8 @@
 	};
 };
 &i2c_7 {
+	qcom,noise-rjct-scl = <3>;
+	qcom,noise-rjct-sda = <3>;
 	status = "okay";
 	
 	focaltech@38{

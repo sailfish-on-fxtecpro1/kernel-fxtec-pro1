@@ -13,6 +13,9 @@
 #include <linux/of_gpio.h>
 //#include <linux/sensors.h>
 
+#include <linux/notifier.h>
+#include <linux/fb.h>
+
 #ifdef CONFIG_HAS_EARLYSUSPEND
 #include <linux/earlysuspend.h>
 #endif
@@ -102,6 +105,9 @@ struct aw9523b_data {
     int gpio_caps_led;
     int gpio_irq; 
     struct work_struct  work;
+    struct work_struct fb_notify_work;
+		struct notifier_block fb_notif;
+		bool resume_in_workqueue;
 };
 
 #define AW9523B_VIO_MIN_UV       1800000
@@ -1032,6 +1038,75 @@ static int aw9523b_parse_dt(struct device *dev,
 }
 #endif
 
+static int aw9523b_suspend(struct device *dev)
+{
+	return 0;
+}
+
+static int aw9523b_resume(struct device *dev)
+{
+	struct aw9523b_data *data = dev_get_drvdata(dev);
+	int err,devic_id;
+	printk("%s begin\n",__func__);
+
+  devic_id = aw9523b_i2c_test(data);
+  if(devic_id < 0)
+  {
+		printk("%s aw9523b_i2c_test error\n",__func__);
+		err = aw9523b_hw_reset(data);
+		if(err == 0xff)
+		{
+			err = -EINVAL;
+			printk("%s reset error\n",__func__);
+		}
+
+		default_p0_p1_settings();     //io_init
+    aw9523b_get_P0_value();
+		aw9523b_get_P1_value();
+  }
+	return 0;
+}
+
+static void fb_notify_resume_work(struct work_struct *work)
+{
+	struct aw9523b_data *aw9523b_data =
+		container_of(work, struct aw9523b_data, fb_notify_work);
+	aw9523b_resume(&aw9523b_data->client->dev);
+}
+
+static int fb_notifier_callback(struct notifier_block *self,
+				 unsigned long event, void *data)
+{
+	struct fb_event *evdata = data;
+	int *blank;
+	struct aw9523b_data *aw9523b_data =
+		container_of(self, struct aw9523b_data, fb_notif);
+
+	if (evdata && evdata->data && aw9523b_data && aw9523b_data->client) {
+		blank = evdata->data;
+		if (1) {
+			if (event == FB_EARLY_EVENT_BLANK &&
+						 *blank == FB_BLANK_UNBLANK)
+				schedule_work(&aw9523b_data->fb_notify_work);
+			else if (event == FB_EVENT_BLANK &&
+						 *blank == FB_BLANK_POWERDOWN) {
+				flush_work(&aw9523b_data->fb_notify_work);
+				aw9523b_suspend(&aw9523b_data->client->dev);
+			}
+		} else {
+			if (event == FB_EVENT_BLANK) {
+				if (*blank == FB_BLANK_UNBLANK)
+					aw9523b_resume(
+						&aw9523b_data->client->dev);
+				else if (*blank == FB_BLANK_POWERDOWN)
+					aw9523b_suspend(
+						&aw9523b_data->client->dev);
+			}
+		}
+	}
+
+	return 0;
+}
 
 static int aw9523b_probe(struct i2c_client *client,
         const struct i2c_device_id *id)
@@ -1138,6 +1213,15 @@ static int aw9523b_probe(struct i2c_client *client,
     //schedule_delayed_work(&pdata->keypad_work, 0);
  	aw9523b_irq_enable(pdata);
     printk("%s exit success\n",__func__);
+
+  INIT_WORK(&pdata->fb_notify_work, fb_notify_resume_work);
+	pdata->fb_notif.notifier_call = fb_notifier_callback;
+
+	err = fb_register_client(&pdata->fb_notif);
+
+	if (err)
+		dev_err(&client->dev, "Unable to register fb_notifier: %d\n",
+			err);
     return 0;
 
 //exit_remove_sysfs:
@@ -1166,6 +1250,8 @@ static int aw9523b_remove(struct i2c_client *client)
     aw9523b_power_deinit(data);
     i2c_set_clientdata(client, NULL);
 
+		if (fb_unregister_client(&data->fb_notif))
+			dev_err(&client->dev, "Error occurred while unregistering fb_notifier.\n");
     kfree(data);
 
     return 0;
